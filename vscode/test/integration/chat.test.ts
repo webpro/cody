@@ -24,4 +24,12 @@ suite('Chat', function () {
         assert.match((await getTranscript(0)).displayText || '', /^hello from the human$/)
         await waitUntil(async () => /^hello from the assistant$/.test((await getTranscript(1)).displayText || ''))
     })
+
+    test('sends a command', async () => {
+        await vscode.commands.executeCommand('cody.chat.focus')
+        const chatView = await getChatViewProvider()
+        await chatView.executeRecipe('chat-question', '/explain')
+
+        assert.match((await getTranscript(0)).displayText || '', /^\/explain$/)
+    })
 })

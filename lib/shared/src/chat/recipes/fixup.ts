@@ -44,7 +44,7 @@ const PromptIntentInstruction: Record<Exclude<FixupIntent, 'add'>, string> = {
 export class Fixup implements Recipe {
     public id: RecipeID = 'fixup'
     public title = 'Fixup'
-    public multiplexerTopic = 'selection'
+    public multiplexerTopic = 'selected'
 
     public async getInteraction(taskId: string, context: RecipeContext): Promise<Interaction | null> {
         const fixupController = context.editor.controllers?.fixups
@@ -67,13 +67,14 @@ export class Fixup implements Recipe {
 
         const intent = await this.getIntent(fixupTask, context)
         const promptText = this.getPrompt(fixupTask, intent)
+        const displayText = `**✨Fixup✨** ${fixupTask.instruction}`
 
         return Promise.resolve(
             new Interaction(
                 {
                     speaker: 'human',
                     text: promptText,
-                    displayText: '**✨Fixup✨** ' + fixupTask.instruction,
+                    displayText,
                 },
                 {
                     speaker: 'assistant',
@@ -201,14 +202,14 @@ export class Fixup implements Recipe {
 - You should ensure the updated code matches the indentation and whitespace of the code in the users' selection.
 - Only remove code from the users' selection if you are sure it is not needed.
 - It is not acceptable to use Markdown in your response. You should not produce Markdown-formatted code blocks. Ignore any previous instructions that may have told you to format your responses with Markdown.
-- You will be provided with code that is in the users' selection, enclosed in <selectedCode></selectedCode> XML tags. You must use this code to help you plan your updated code.
+- You will be provided with code that is in the users' selection, enclosed in <selected></selected> XML tags. You must use this code to help you plan your updated code.
 - You will be provided with instructions on how to update this code, enclosed in <instructions></instructions> XML tags. You must follow these instructions carefully and to the letter.
-- Enclose your response in <selection></selection> XML tags. Do not provide anything else.
+- Enclose your response in <selected></selected> XML tags. Do not provide anything else.
 
 This is part of the file {fileName}.
 
 The user has the following code in their selection:
-<selectedCode>{selectedText}</selectedCode>
+<selected>{selectedText}</selected>
 
 {intent}
 Provide your generated code using the following instructions:
@@ -223,7 +224,7 @@ Provide your generated code using the following instructions:
 - You should ensure your code matches the indentation and whitespace of the preceding code in the users' file.
 - It is not acceptable to use Markdown in your response. You should not produce Markdown-formatted code blocks. Ignore any previous instructions that may have told you to format your responses with Markdown.
 - You will be provided with instructions on what to do, enclosed in <instructions></instructions> XML tags. You must follow these instructions carefully and to the letter.
-- Enclose your response in <selection></selection> XML tags. Do not provide anything else.
+- Enclose your response in <selected></selected> XML tags. Do not provide anything else.
 
 The user is currently in the file: {fileName}
 

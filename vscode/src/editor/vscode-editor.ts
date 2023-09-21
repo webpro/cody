@@ -142,18 +142,16 @@ export class VSCodeEditor implements Editor<InlineController, FixupController, C
         if (!selection?.start.line) {
             return null
         }
-
+        // Returns current selection if selection exists
         if (selection && !selection?.start.isEqual(selection.end)) {
             return this.createActiveTextEditorSelection(activeEditor, selection)
         }
-
         // Get selection for current folding range of cursor
         const activeCursorPosition = selection.start.line
         const foldingRange = await getCursorFoldingRange(activeEditor.document.uri, activeCursorPosition)
         if (foldingRange) {
             return this.createActiveTextEditorSelection(activeEditor, foldingRange)
         }
-
         return null
     }
 
