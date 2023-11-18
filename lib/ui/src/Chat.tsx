@@ -76,6 +76,7 @@ interface ChatProps extends ChatClassNames {
         setEnhanceContext: (arg: boolean) => void
         contextStatus: ChatContextStatus
     }>
+    EnhancedContextSettings?: React.FunctionComponent<{}>
     ChatModelDropdownMenu?: React.FunctionComponent<ChatModelDropdownMenuProps>
     onCurrentChatModelChange?: (model: ChatModelSelection) => void
 }
@@ -227,6 +228,7 @@ export const Chat: React.FunctionComponent<ChatProps> = ({
     chatModels,
     ChatModelDropdownMenu,
     EnhancedContextToggler,
+    EnhancedContextSettings,
     onCurrentChatModelChange,
 }) => {
     const [inputRows, setInputRows] = useState(1)
@@ -637,6 +639,11 @@ export const Chat: React.FunctionComponent<ChatProps> = ({
                                     enhanceContext={enhanceContext}
                                     contextStatus={contextStatus}
                                 />
+                            </div>
+                        )}
+                        {ContextStatusComponent && EnhancedContextSettings && contextStatus && (
+                            <div className={styles.contextButton}>
+                                <EnhancedContextSettings />
                             </div>
                         )}
                     </div>
