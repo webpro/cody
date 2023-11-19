@@ -81,12 +81,34 @@
 	opacity: 0.5;
 }
 
+:global .codicon-sync.codicon-modifier-spin,
+:global .codicon-loading.codicon-modifier-spin,
+:global .codicon-gear.codicon-modifier-spin {
+    /* TODO: Vite mangles this animation name, but can't specify :global here. */
+	animation: codicon-spin 1.5s steps(30) infinite;
+}
+
+@keyframes codicon-spin {
+	100% {
+		transform:rotate(360deg);
+	}
+}
+
+/* If your Storybook is missing a glyph, add a definition here. See
+ * https://github.com/microsoft/vscode-codicons/blob/main/dist/codicon.css
+ */
 :global .codicon-check::before { content: '\eab2' }
+:global .codicon-circle-outline::before { content: '\eabc' }
+:global .codicon-circle-slash::before { content: '\eabd' }
 :global .codicon-close::before { content: '\ea76' }
+:global .codicon-folder::before { content: '\ea83' }
 :global .codicon-gear::before { content: '\eaf8' }
 :global .codicon-link::before { content: '\eb15' }
+:global .codicon-loading::before { content: "\eb19" }
 :global .codicon-rocket::before { content: '\eb44' }
+:global .codicon-settings::before { content: '\eb52' }
 :global .codicon-stop-circle::before { content: '\eba5' }
+:global .codicon-symbol-folder::before { content: '\ea83' }
 :global .codicon-terminal::before { content: '\ea85' }
 :global .codicon-thumbsdown::before { content: '\eb6b' }
 :global .codicon-thumbsup::before { content: '\eb6c' }

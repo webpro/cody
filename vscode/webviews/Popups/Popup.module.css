@@ -35,6 +35,7 @@
     background-color: var(--vscode-input-background);
     border-left: 1px solid var(--vscode-widget-border);
     border-bottom: 1px solid var(--vscode-widget-border);
+
     /* no box shadow on this, it relies on overlapping the rest of the popup */
 }
 
