@@ -28,7 +28,7 @@ import { CODY_FEEDBACK_URL } from '../src/chat/protocol'
 import { ChatCommandsComponent } from './ChatCommands'
 import { ChatInputContextSimplified } from './ChatInputContextSimplified'
 import { ChatModelDropdownMenu } from './Components/ChatModelDropdownMenu'
-import { EnhancedContextSettings } from './Components/EnhancedContextSettings'
+import { EnhancedContextContext, EnhancedContextSettings } from './Components/EnhancedContextSettings'
 import { EnhancedContextToggler } from './Components/EnhancedContextToggler'
 import { FileLink } from './Components/FileLink'
 import { OnboardingPopupProps } from './Popups/OnboardingExperimentPopups'
@@ -188,65 +188,105 @@ export const Chat: React.FunctionComponent<React.PropsWithChildren<ChatboxProps>
     )
 
     return (
-        <ChatUI
-            messageInProgress={messageInProgress}
-            messageBeingEdited={messageBeingEdited}
-            setMessageBeingEdited={setMessageBeingEdited}
-            transcript={transcript}
-            contextStatus={contextStatus}
-            formInput={formInput}
-            setFormInput={setFormInput}
-            inputHistory={inputHistory}
-            setInputHistory={setInputHistory}
-            onSubmit={onSubmit}
-            textAreaComponent={TextArea}
-            submitButtonComponent={SubmitButton}
-            suggestionButtonComponent={SuggestionButton}
-            fileLinkComponent={FileLink}
-            symbolLinkComponent={SymbolLink}
-            className={styles.innerContainer}
-            codeBlocksCopyButtonClassName={styles.codeBlocksCopyButton}
-            codeBlocksInsertButtonClassName={styles.codeBlocksInsertButton}
-            transcriptItemClassName={styles.transcriptItem}
-            humanTranscriptItemClassName={styles.humanTranscriptItem}
-            transcriptItemParticipantClassName={styles.transcriptItemParticipant}
-            transcriptActionClassName={styles.transcriptAction}
-            inputRowClassName={styles.inputRow}
-            chatInputContextClassName={styles.chatInputContext}
-            chatInputClassName={styles.chatInputClassName}
-            EditButtonContainer={EditButton}
-            editButtonOnSubmit={onEditBtnClick}
-            FeedbackButtonsContainer={FeedbackButtons}
-            feedbackButtonsOnSubmit={onFeedbackBtnClick}
-            copyButtonOnSubmit={onCopyBtnClick}
-            insertButtonOnSubmit={onInsertBtnClick}
-            suggestions={suggestions}
-            setSuggestions={setSuggestions}
-            onAbortMessageInProgress={abortMessageInProgress}
-            isTranscriptError={isTranscriptError}
-            // TODO: We should fetch this from the server and pass a pretty component
-            // down here to render cody is disabled on the instance nicely.
-            isCodyEnabled={true}
-            codyNotEnabledNotice={undefined}
-            afterMarkdown={welcomeMessageMarkdown}
-            helpMarkdown=""
-            ChatButtonComponent={ChatButton}
-            chatCommands={chatCommands}
-            filterChatCommands={filterChatCommands}
-            ChatCommandsComponent={ChatCommandsComponent}
-            contextStatusComponent={ChatInputContextSimplified}
-            contextStatusComponentProps={{
-                contextStatus,
-                ...applessOnboarding.props,
+        <EnhancedContextContext.Provider
+            value={{
+                enabled: true,
+                groups: [
+                    {
+                        name: '~/projects/foo',
+                        providers: [
+                            { kind: 'embeddings', type: 'local', state: 'unconsented' },
+                            { kind: 'graph', state: 'ready' },
+                            { kind: 'search', state: 'indexing' },
+                        ],
+                    },
+                    {
+                        name: 'gitlab.com/my/repo',
+                        providers: [
+                            {
+                                kind: 'embeddings',
+                                type: 'remote',
+                                remoteName: 'gitlab.com/my/repo',
+                                origin: 'sourcegraph.com',
+                                state: 'ready',
+                            },
+                        ],
+                    },
+                    {
+                        name: 'github.com/sourcegraph/bar',
+                        providers: [
+                            {
+                                kind: 'embeddings',
+                                type: 'remote',
+                                remoteName: 'github.com/sourcegraph/bar',
+                                origin: 'sourcegraph.sourcegraph.com',
+                                state: 'no-match',
+                            },
+                        ],
+                    },
+                ],
             }}
-            contextSelection={contextSelection}
-            UserContextSelectorComponent={UserContextSelectorComponent}
-            chatModels={chatModels}
-            onCurrentChatModelChange={onCurrentChatModelChange}
-            ChatModelDropdownMenu={ChatModelDropdownMenu}
-            EnhancedContextSettings={enableNewChatUI ? EnhancedContextSettings : undefined}
-            EnhancedContextToggler={enableNewChatUI ? EnhancedContextToggler : undefined}
-        />
+        >
+            <ChatUI
+                messageInProgress={messageInProgress}
+                messageBeingEdited={messageBeingEdited}
+                setMessageBeingEdited={setMessageBeingEdited}
+                transcript={transcript}
+                contextStatus={contextStatus}
+                formInput={formInput}
+                setFormInput={setFormInput}
+                inputHistory={inputHistory}
+                setInputHistory={setInputHistory}
+                onSubmit={onSubmit}
+                textAreaComponent={TextArea}
+                submitButtonComponent={SubmitButton}
+                suggestionButtonComponent={SuggestionButton}
+                fileLinkComponent={FileLink}
+                symbolLinkComponent={SymbolLink}
+                className={styles.innerContainer}
+                codeBlocksCopyButtonClassName={styles.codeBlocksCopyButton}
+                codeBlocksInsertButtonClassName={styles.codeBlocksInsertButton}
+                transcriptItemClassName={styles.transcriptItem}
+                humanTranscriptItemClassName={styles.humanTranscriptItem}
+                transcriptItemParticipantClassName={styles.transcriptItemParticipant}
+                transcriptActionClassName={styles.transcriptAction}
+                inputRowClassName={styles.inputRow}
+                chatInputContextClassName={styles.chatInputContext}
+                chatInputClassName={styles.chatInputClassName}
+                EditButtonContainer={EditButton}
+                editButtonOnSubmit={onEditBtnClick}
+                FeedbackButtonsContainer={FeedbackButtons}
+                feedbackButtonsOnSubmit={onFeedbackBtnClick}
+                copyButtonOnSubmit={onCopyBtnClick}
+                insertButtonOnSubmit={onInsertBtnClick}
+                suggestions={suggestions}
+                setSuggestions={setSuggestions}
+                onAbortMessageInProgress={abortMessageInProgress}
+                isTranscriptError={isTranscriptError}
+                // TODO: We should fetch this from the server and pass a pretty component
+                // down here to render cody is disabled on the instance nicely.
+                isCodyEnabled={true}
+                codyNotEnabledNotice={undefined}
+                afterMarkdown={welcomeMessageMarkdown}
+                helpMarkdown=""
+                ChatButtonComponent={ChatButton}
+                chatCommands={chatCommands}
+                filterChatCommands={filterChatCommands}
+                ChatCommandsComponent={ChatCommandsComponent}
+                contextStatusComponent={ChatInputContextSimplified}
+                contextStatusComponentProps={{
+                    contextStatus,
+                    ...applessOnboarding.props,
+                }}
+                contextSelection={contextSelection}
+                UserContextSelectorComponent={UserContextSelectorComponent}
+                chatModels={chatModels}
+                onCurrentChatModelChange={onCurrentChatModelChange}
+                ChatModelDropdownMenu={ChatModelDropdownMenu}
+                EnhancedContextSettings={enableNewChatUI ? EnhancedContextSettings : undefined}
+                EnhancedContextToggler={enableNewChatUI ? EnhancedContextToggler : undefined}
+            />
+        </EnhancedContextContext.Provider>
     )
 }
 
