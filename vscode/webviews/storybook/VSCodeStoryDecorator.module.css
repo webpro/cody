@@ -2,6 +2,10 @@
 * CSS styles for storybooks to define variables and otherwise resemble the VS Code.
 */
 
+button {
+    
+}
+
 .container {
     max-width: 600px;
     margin: 2rem auto;
@@ -13,6 +17,7 @@
 
 .container a {
     color: var(--vscode-link-color);
+    text-decoration: none;
 }
 
 .test-dark-sidebar {
@@ -43,11 +48,15 @@
     --vscode-editor-font-size: 13px;
     --vscode-editor-foreground: var(--foreground);
     --vscode-font-family: -apple-system, BlinkMacSystemFont, 'Ubuntu', 'Droid Sans', 'Segoe WPC', 'Segoe UI', sans-serif;
+    --vscode-focusBorder: #4daafc;
+    --vscode-checkbox-background: #313131;
+    --vscode-checkbox-border: #3c3c3c;
     --vscode-input-background: #313131;
     --vscode-input-foreground: #cccccc;
     --vscode-inputValidation-errorBackground: #ff000033;
     --vscode-inputValidation-errorBorder: #ff0000;
-    --vscode-link-color: #7777ff;
+    --vscode-link-color: #4daafc;
+    --vscode-textLink-foreground: #4daafc;
     --vscode-sideBarSectionHeader-border: #ffffff33;
     --vscode-sideBarTitle-foreground: #ffffffcc;
     --vscode-sideBar-background: #181818;
@@ -58,6 +67,8 @@
     --vscode-list-warningForeground: #855600;
     --vscode-problemsErrorIcon-foreground: #f48771;
     --vscode-widget-shadow: rgba(0, 0, 0, 0.2);
+    --vscode-quickInput-background: #222222;
+    --vscode-quickInput-foreground: #cccccc;
 }
 
 @font-face {
