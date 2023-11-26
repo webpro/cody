@@ -9,22 +9,87 @@
     gap: 0.5rem;
 }
 
-.enhanced-context-settings-popup h1 {
-    font-weight: 600;
+.enhanced-context-settings-popup label {
+    display: block;
     margin-bottom: 0.2rem;
 }
 
-.enhanced-context-settings-popup p {
+.enhanced-context-settings-popup label h1 {
+    font-weight: 700;
+    display: inline;
+    cursor: pointer;
+}
+
+.enhanced-context-settings-popup > p {
     display: block;
 }
 
-.enhanced-context-settings-popup dl {
-    margin: 1rem 0;
+.folders-list {
+    margin: 1rem 0 0 0;
 }
 
-.enhanced-context-settings-popup dt {
+.folders-list > dt {
     display: flex;
-    gap: 0.2rem;
+    gap: 0.4rem;
+}
+
+.folders-list > dd {
+    margin-left: 0rem;
+    padding-left: 1rem;
+    border-left: 1px solid var(--vscode-checkbox-border);
+}
+
+.folders-list > dd + dt {
+    margin-top: 1rem;
+}
+
+.providers-list, .provider-item {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.providers-list {
+    margin-top: 0.4rem;
+    padding: 0.25rem 0 0.5rem 0;
+    font-size: 12px;
+}
+
+.provider-item + .provider-item {
+    margin-top: 0.75rem;
+}
+
+.providers-list p {
+    margin-top: 0.2rem;
+    margin-left: 1.25rem;
+}
+
+.providers-list p + p {
+    margin-top: 0.5rem;
+}
+
+.provider-label {
+    font-weight: 600;
+}
+
+.provider-icon-and-name {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.provider-explanatory-text, .provider-inline-state {
+    opacity: 0.8;
+}
+
+.provider-item:not(:has(p)) {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.provider-inline-state {
+    font-weight: normal;
 }
 
 .enhanced-context-settings-popup i {

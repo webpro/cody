@@ -92,10 +92,9 @@ button {
 	opacity: 0.5;
 }
 
-:global .codicon-sync.codicon-modifier-spin,
-:global .codicon-loading.codicon-modifier-spin,
-:global .codicon-gear.codicon-modifier-spin {
-    /* TODO: Vite mangles this animation name, but can't specify :global here. */
+:global .codicon-sync.codicon-modifier-spin:local,
+:global .codicon-loading.codicon-modifier-spin:local,
+:global .codicon-gear.codicon-modifier-spin:local {
 	animation: codicon-spin 1.5s steps(30) infinite;
 }
 

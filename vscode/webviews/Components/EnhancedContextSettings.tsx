@@ -95,11 +95,13 @@ const ContextGroupComponent: React.FunctionComponent<{ group: ContextGroup }> = 
                 <i className="codicon codicon-folder" /> {group.name}
             </dt>
             <dd>
-                {group.providers.map(provider => (
-                    <div key={provider.kind}>
-                        <ContextProviderComponent provider={provider} />
-                    </div>
-                ))}
+                <ol className={styles.providersList}>
+                    {group.providers.map(provider => (
+                        <li key={provider.kind} className={styles.providerItem}>
+                            <ContextProviderComponent provider={provider} />
+                        </li>
+                    ))}
+                </ol>
             </dd>
         </>
     )
@@ -119,13 +121,13 @@ const EmbeddingsConsentComponent: React.FunctionComponent<{ provider: LocalEmbed
         events.onConsentToEmbeddings(provider)
     }
     return (
-        <>
-            <p>
+        <div>
+            <p className={styles.providerExplanatoryText}>
                 The repository&apos;s contents will be uploaded to OpenAI&apos;s Embeddings API and then stored locally.
                 To exclude files, set up a <a href="about:blank#TODO">Cody ignore file.</a>
             </p>
-            <VSCodeButton onClick={onClick}>Enable Embeddings</VSCodeButton>
-        </>
+            <p><VSCodeButton onClick={onClick}>Enable Embeddings</VSCodeButton></p>
+        </div>
     )
 }
 
@@ -134,16 +136,16 @@ function contextProviderState(provider: ContextProvider): React.ReactNode {
         case 'indeterminate':
         case 'ready':
             if (provider.kind === 'embeddings' && provider.type === 'remote') {
-                return <p>Inherited {provider.remoteName}</p>
+                return <p className={styles.providerExplanatoryText}>Inherited {provider.remoteName}</p>
             }
             return <></>
         case 'indexing':
-            return <>&mdash; Indexing&hellip;</>
+            return <span className={styles.providerInlineState}>&mdash; Indexing&hellip;</span>
         case 'unconsented':
             return <EmbeddingsConsentComponent provider={provider} />
         case 'no-match':
             return (
-                <p>
+                <p className={styles.providerExplanatoryText}>
                     No repository matching {provider.remoteName} on <a href="about:blank#TODO">{provider.origin}</a>
                 </p>
             )
@@ -174,7 +176,13 @@ const ContextProviderComponent: React.FunctionComponent<{ provider: ContextProvi
     }
     return (
         <>
-            {stateIcon} {labelFor(provider.kind)} {contextProviderState(provider)}
+            <span className={styles.providerIconAndName}>
+                {stateIcon}
+                {' '}
+                <span className={styles.providerLabel}>{labelFor(provider.kind)}</span>
+            </span>
+            {' '}
+            {contextProviderState(provider)}
         </>
     )
 }
@@ -206,7 +214,7 @@ export const EnhancedContextSettings: React.FunctionComponent<EnhancedContextSet
                             Automatically include additional context about your code.{' '}
                             <a href="about:blank#TODO">Learn more</a>
                         </p>
-                        <dl>
+                        <dl className={styles.foldersList}>
                             {context.groups.map(group => (
                                 <ContextGroupComponent key={group.name} group={group} />
                             ))}
