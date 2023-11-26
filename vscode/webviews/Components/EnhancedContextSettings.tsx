@@ -194,27 +194,24 @@ export const EnhancedContextSettings: React.FunctionComponent<EnhancedContextSet
                 onDismiss={() => setOpen(!isOpen)}
                 classNames={[popupStyles.popupTrail, styles.enhancedContextSettingsPopup]}
             >
-                <div>
-                    {
-                        // TODO: Two problems with the VScode checkbox:
-                        // - It's hard to see on this background in many themes.
-                        // - The checkbox and label are one component, so
-                        //   aligning the following content with the label is
-                        //   tedious.
-                    }
-                    <VSCodeCheckbox onChange={enabledChanged} checked={context.enabled}>
-                        {' '}
-                        <h1>Enhanced Context ✨</h1>
-                    </VSCodeCheckbox>
-                    <p>
-                        Automatically include additional context about your code.{' '}
-                        <a href="about:blank#TODO">Learn more</a>
-                    </p>
-                    <dl>
-                        {context.groups.map(group => (
-                            <ContextGroupComponent key={group.name} group={group} />
-                        ))}
-                    </dl>
+                <div className={styles.enhancedContextInnerContainer}>
+                    <div>
+                        <VSCodeCheckbox onChange={enabledChanged} checked={context.enabled} id="enhanced-context-checkbox" />
+                    </div>
+                    <div>
+                        <label htmlFor="enhanced-context-checkbox">
+                            <h1>Enhanced Context ✨</h1>
+                        </label>
+                        <p>
+                            Automatically include additional context about your code.{' '}
+                            <a href="about:blank#TODO">Learn more</a>
+                        </p>
+                        <dl>
+                            {context.groups.map(group => (
+                                <ContextGroupComponent key={group.name} group={group} />
+                            ))}
+                        </dl>
+                    </div>
                 </div>
             </PopupFrame>
             <VSCodeButton

@@ -74,7 +74,8 @@
 
 .popup h1,
 .popup p {
-    all: unset;
+    margin: 0;
+    font-size: inherit;
 }
 
 .action-button-container {

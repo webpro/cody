@@ -3,16 +3,23 @@
     cursor: default;
 }
 
-.enhanced-context-settings-popup p {
-    display: block;
+.enhanced-context-inner-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
 }
 
 .enhanced-context-settings-popup h1 {
     font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.enhanced-context-settings-popup p {
+    display: block;
 }
 
 .enhanced-context-settings-popup dl {
-    margin-bottom: 0.5rem;
+    margin: 1rem 0;
 }
 
 .enhanced-context-settings-popup dt {
