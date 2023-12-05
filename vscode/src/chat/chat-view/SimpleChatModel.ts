@@ -4,6 +4,7 @@ import { ChatMessage } from '@sourcegraph/cody-shared'
 import { TranscriptJSON } from '@sourcegraph/cody-shared/src/chat/transcript'
 import { InteractionJSON } from '@sourcegraph/cody-shared/src/chat/transcript/interaction'
 import { reformatBotMessageForChat } from '@sourcegraph/cody-shared/src/chat/viewHelpers'
+import { CODY_INTRO_PROMPT } from '@sourcegraph/cody-shared/src/prompt/prompt-mixin'
 import { Message } from '@sourcegraph/cody-shared/src/sourcegraph-api'
 
 import { contextItemsToContextFiles } from './chat-helpers'
@@ -47,6 +48,9 @@ export class SimpleChatModel {
     public addHumanMessage(message: Omit<Message, 'speaker'>): void {
         if (this.messagesWithContext.at(-1)?.message.speaker === 'human') {
             throw new Error('Cannot add a user message after a user message')
+        }
+        if (message.text) {
+            message.text = `${CODY_INTRO_PROMPT} ${message.text}`
         }
         this.messagesWithContext.push({
             message: {
