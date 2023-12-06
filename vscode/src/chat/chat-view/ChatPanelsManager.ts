@@ -10,13 +10,11 @@ import { EmbeddingsSearch } from '@sourcegraph/cody-shared/src/embeddings'
 import { featureFlagProvider } from '@sourcegraph/cody-shared/src/experimentation/FeatureFlagProvider'
 
 import { View } from '../../../webviews/NavBar'
-import { getFullConfig } from '../../configuration'
 import { LocalEmbeddingsController } from '../../local-context/local-embeddings'
 import { logDebug } from '../../log'
-import { getProcessInfo } from '../../services/LocalAppDetector'
 import { createCodyChatTreeItems } from '../../services/treeViewItems'
 import { TreeViewProvider } from '../../services/TreeViewProvider'
-import { AuthStatus, ConfigurationSubsetForWebview, LocalEnv } from '../protocol'
+import { AuthStatus } from '../protocol'
 
 import { CodyChatPanelViewType } from './ChatManager'
 import { ChatPanelProvider, ChatPanelProviderOptions, ChatViewProviderWebview } from './ChatPanelProvider'
@@ -44,7 +42,7 @@ export interface IChatPanelProvider extends vscode.Disposable {
     restoreSession(chatIDj: string): Promise<void>
     setConfiguration?: (config: Config) => void
     revive: (panel: vscode.WebviewPanel, chatID: string) => Promise<void>
-    syncWebviewConfig: (authStatus: AuthStatus, configForWebview: ConfigurationSubsetForWebview & LocalEnv) => void
+    // syncWebviewConfig: (authStatus: AuthStatus, configForWebview: ConfigurationSubsetForWebview & LocalEnv) => void
 }
 
 export class ChatPanelsManager implements vscode.Disposable {
@@ -96,17 +94,21 @@ export class ChatPanelsManager implements vscode.Disposable {
         await vscode.commands.executeCommand('setContext', CodyChatPanelViewType, authStatus.isLoggedIn)
         await this.updateTreeViewHistory()
 
-        // Update all the webview panels with the latest config, chat models, and authStatus
-        Array.from(this.panelProvidersMap.values()).map(async provider => {
-            const config = await getFullConfig()
-            const localProcess = getProcessInfo()
-            const configForWebview: ConfigurationSubsetForWebview & LocalEnv = {
-                ...localProcess,
-                debugEnable: config.debugEnable,
-                serverEndpoint: config.serverEndpoint,
-            }
-            provider.syncWebviewConfig(authStatus, configForWebview)
-        })
+        // const config = this.options.contextProvider.config
+
+        // // Update all the webview panels with the latest config, chat models, and authStatus
+        // await Promise.all(
+        //     Array.from(this.panelProvidersMap.values()).map(async provider => {
+        //         const config = await getFullConfig()
+        //         const localProcess = getProcessInfo()
+        //         const configForWebview: ConfigurationSubsetForWebview & LocalEnv = {
+        //             ...localProcess,
+        //             debugEnable: config.debugEnable,
+        //             serverEndpoint: config.serverEndpoint,
+        //         }
+        //         provider.syncWebviewConfig(authStatus, configForWebview)
+        //     })
+        // )
     }
 
     public async getChatPanel(): Promise<IChatPanelProvider> {
