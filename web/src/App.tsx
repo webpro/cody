@@ -119,6 +119,7 @@ export const App: React.FunctionComponent = () => {
                                     isDotComUser: isDotCom(config.serverEndpoint),
                                     isCodyProUser: false,
                                 }}
+                                chatEnabled={true}
                             />
                         </>
                     )
