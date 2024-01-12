@@ -16,7 +16,7 @@ import { type ChatClient } from '@sourcegraph/cody-shared/src/chat/chat'
 import { isCodyIgnoredFile } from '@sourcegraph/cody-shared/src/chat/context-filter'
 import { type TranscriptJSON } from '@sourcegraph/cody-shared/src/chat/transcript'
 import { type InteractionJSON } from '@sourcegraph/cody-shared/src/chat/transcript/interaction'
-import { type ChatEventSource } from '@sourcegraph/cody-shared/src/chat/transcript/messages'
+import { type ChatEventSource, type ChatInputHistory } from '@sourcegraph/cody-shared/src/chat/transcript/messages'
 import { Typewriter } from '@sourcegraph/cody-shared/src/chat/typewriter'
 import { reformatBotMessageForChat } from '@sourcegraph/cody-shared/src/chat/viewHelpers'
 import { type ContextMessage } from '@sourcegraph/cody-shared/src/codebase-context/messages'
@@ -482,7 +482,7 @@ export class SimpleChatPanelProvider implements vscode.Disposable {
         this.postViewTranscript()
     }
 
-    public async saveSession(humanInput?: string): Promise<void> {
+    public async saveSession(humanInput?: ChatInputHistory): Promise<void> {
         const allHistory = await this.history.saveChat(
             this.authProvider.getAuthStatus(),
             this.chatModel.toTranscriptJSON(),
@@ -633,7 +633,10 @@ export class SimpleChatPanelProvider implements vscode.Disposable {
         // The text we will use to send to LLM
         const promptText = command ? [command.prompt, command.additionalInput].join(' ')?.trim() : inputText
         this.chatModel.addHumanMessage({ text: promptText }, displayText)
-        await this.saveSession(inputText)
+        const inputHistory: ChatInputHistory = userContextFiles.length
+            ? { inputText, inputContextFiles: userContextFiles }
+            : inputText
+        await this.saveSession(inputHistory)
         // trigger the context progress indicator
         this.postViewTranscript({ speaker: 'assistant' })
         await this.generateAssistantResponse(

@@ -54,12 +54,24 @@ export interface ChatMetadata {
 
 export interface UserLocalHistory {
     chat: ChatHistory
-    input: string[]
+    input: ChatInputHistory[]
 }
 
 export interface ChatHistory {
     [chatID: string]: TranscriptJSON
 }
+
+/**
+ * We must support bare strings in history because existing users may have histories
+ * persisted with them (and since we support them, we can also use them for entries with
+ * no context files).
+ */
+export type ChatInputHistory =
+    | string
+    | {
+          inputText: string
+          inputContextFiles: ContextFile[]
+      }
 
 export interface OldChatHistory {
     [chatID: string]: ChatMessage[]

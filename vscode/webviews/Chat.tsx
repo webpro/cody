@@ -3,8 +3,13 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { VSCodeButton, VSCodeLink } from '@vscode/webview-ui-toolkit/react'
 import classNames from 'classnames'
 
-import { type ChatModelProvider, type ContextFile, type Guardrails } from '@sourcegraph/cody-shared'
-import { type ChatMessage } from '@sourcegraph/cody-shared/src/chat/transcript/messages'
+import {
+    type ChatInputHistory,
+    type ChatMessage,
+    type ChatModelProvider,
+    type ContextFile,
+    type Guardrails,
+} from '@sourcegraph/cody-shared'
 import { type CodyCommand } from '@sourcegraph/cody-shared/src/commands'
 import { type TelemetryService } from '@sourcegraph/cody-shared/src/telemetry'
 import {
@@ -41,8 +46,8 @@ interface ChatboxProps {
     transcript: ChatMessage[]
     formInput: string
     setFormInput: (input: string) => void
-    inputHistory: string[]
-    setInputHistory: (history: string[]) => void
+    inputHistory: ChatInputHistory[]
+    setInputHistory: (history: ChatInputHistory[]) => void
     vscodeAPI: VSCodeWrapper
     telemetryService: TelemetryService
     suggestions?: string[]

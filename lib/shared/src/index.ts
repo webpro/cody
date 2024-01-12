@@ -3,7 +3,7 @@
 export { ChatModelProvider } from './chat-models'
 export type { ChatContextStatus } from './chat/context'
 export { renderCodyMarkdown } from './chat/markdown'
-export type { ChatButton, ChatError, ChatMessage } from './chat/transcript/messages'
+export type { ChatButton, ChatError, ChatMessage, ChatInputHistory } from './chat/transcript/messages'
 export type { ContextFile, PreciseContext } from './codebase-context/messages'
 export type { CodyCommand } from './commands'
 export { basename, dedupeWith, isDefined, pluralize } from './common'

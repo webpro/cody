@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import {
     isDefined,
     type ChatButton,
+    type ChatInputHistory,
     type ChatMessage,
     type ChatModelProvider,
     type CodyCommand,
@@ -27,8 +28,8 @@ interface ChatProps extends ChatClassNames {
     setMessageBeingEdited: (input: boolean) => void
     formInput: string
     setFormInput: (input: string) => void
-    inputHistory: string[]
-    setInputHistory: (history: string[]) => void
+    inputHistory: ChatInputHistory[]
+    setInputHistory: (history: ChatInputHistory[]) => void
     onSubmit: (text: string, submitType: ChatSubmitType, userContextFiles?: Map<string, ContextFile>) => void
     gettingStartedComponent?: React.FunctionComponent<any>
     gettingStartedComponentProps?: any
@@ -234,6 +235,18 @@ export const Chat: React.FunctionComponent<ChatProps> = ({
     const [chatContextFiles, setChatContextFiles] = useState<Map<string, ContextFile>>(new Map([]))
     const [selectedChatContext, setSelectedChatContext] = useState(0)
 
+    // Gets the display text for a context file to be completed into the chat when a user
+    // selects a file.
+    //
+    // This is also used to reconstruct the map from the chat history (which only stores context
+    // files).
+    function getContextFileDisplayText(contextFile: ContextFile): string {
+        const isFileType = contextFile.type === 'file'
+        const range = contextFile.range ? `:${contextFile.range?.start.line}-${contextFile.range?.end.line}` : ''
+        const symbolName = isFileType ? '' : `#${contextFile.fileName}`
+        return `@${contextFile.path?.relative}${range}${symbolName}`
+    }
+
     /**
      * Callback function called when a chat context file is selected from the context selector.
      *
@@ -251,10 +264,7 @@ export const Chat: React.FunctionComponent<ChatProps> = ({
             if (lastAtIndex >= 0 && selected) {
                 // Trim the @file portion from input
                 const inputPrefix = input.slice(0, lastAtIndex)
-                const isFileType = selected.type === 'file'
-                const range = selected.range ? `:${selected.range?.start.line}-${selected.range?.end.line}` : ''
-                const symbolName = isFileType ? '' : `#${selected.fileName}`
-                const fileDisplayText = `@${selected.path?.relative}${range}${symbolName}`
+                const fileDisplayText = getContextFileDisplayText(selected)
                 // Add empty space at the end to end the file matching process
                 const newInput = `${inputPrefix}${fileDisplayText} `
 
@@ -309,7 +319,9 @@ export const Chat: React.FunctionComponent<ChatProps> = ({
             const rowsCount = (inputValue.match(/\n/g)?.length || 0) + 1
             setInputRows(rowsCount > 25 ? 25 : rowsCount)
             setFormInput(inputValue)
-            if (inputValue !== inputHistory[historyIndex]) {
+            const lastInput = inputHistory[historyIndex]
+            const lastText = typeof lastInput === 'string' ? lastInput : lastInput?.inputText
+            if (inputValue !== lastText) {
                 setHistoryIndex(inputHistory.length)
             }
         },
@@ -322,11 +334,20 @@ export const Chat: React.FunctionComponent<ChatProps> = ({
                 return
             }
             onSubmit(input, submitType, chatContextFiles)
+
+            // Record the chat history with (optional) context files.
+            const newHistory: ChatInputHistory = chatContextFiles.size
+                ? {
+                      inputText: input,
+                      inputContextFiles: Array.from(chatContextFiles.values()),
+                  }
+                : input
+            setHistoryIndex(inputHistory.length + 1)
+            setInputHistory([...inputHistory, newHistory])
+
             setSuggestions?.(undefined)
             setChatContextFiles(new Map())
             setSelectedChatContext(0)
-            setHistoryIndex(inputHistory.length + 1)
-            setInputHistory([...inputHistory, input])
             setDisplayCommands(null)
             setSelectedChatCommand(-1)
         },
@@ -469,16 +490,35 @@ export const Chat: React.FunctionComponent<ChatProps> = ({
                 return
             }
 
-            if (formInput === inputHistory[historyIndex] || !formInput) {
+            // If there's no input or the input matches the current history index, handle cycling through
+            // history with the cursor keys.
+            const previousHistoryInput = inputHistory[historyIndex]
+            const previousHistoryText: string =
+                typeof previousHistoryInput === 'string' ? previousHistoryInput : previousHistoryInput?.inputText
+            if (formInput === previousHistoryText || !formInput) {
+                let newIndex: number | undefined
                 if (event.key === 'ArrowUp' && caretPosition === 0) {
-                    const newIndex = historyIndex - 1 < 0 ? inputHistory.length - 1 : historyIndex - 1
-                    setHistoryIndex(newIndex)
-                    setFormInput(inputHistory[newIndex])
+                    newIndex = historyIndex - 1 < 0 ? inputHistory.length - 1 : historyIndex - 1
                 } else if (event.key === 'ArrowDown' && caretPosition === formInput.length) {
                     if (historyIndex + 1 < inputHistory.length) {
-                        const newIndex = historyIndex + 1
-                        setHistoryIndex(newIndex)
-                        setFormInput(inputHistory[newIndex])
+                        newIndex = historyIndex + 1
+                    }
+                }
+                if (newIndex !== undefined) {
+                    setHistoryIndex(newIndex)
+
+                    const newHistoryInput = inputHistory[newIndex]
+                    if (typeof newHistoryInput === 'string') {
+                        setFormInput(newHistoryInput)
+                        setChatContextFiles(new Map())
+                    } else {
+                        setFormInput(newHistoryInput.inputText)
+                        // chatContextFiles uses a map but history only stores a simple array.
+                        const contextFilesMap = new Map<string, ContextFile>()
+                        newHistoryInput.inputContextFiles.forEach(file =>
+                            contextFilesMap.set(getContextFileDisplayText(file), file)
+                        )
+                        setChatContextFiles(contextFilesMap)
                     }
                 }
             }

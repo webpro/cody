@@ -3,7 +3,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import './App.css'
 
 import { type ChatModelProvider, type ContextFile } from '@sourcegraph/cody-shared'
-import { type ChatHistory, type ChatMessage } from '@sourcegraph/cody-shared/src/chat/transcript/messages'
+import {
+    type ChatHistory,
+    type ChatInputHistory,
+    type ChatMessage,
+} from '@sourcegraph/cody-shared/src/chat/transcript/messages'
 import { type EnhancedContextContextT } from '@sourcegraph/cody-shared/src/codebase-context/context-status'
 import { type CodyCommand } from '@sourcegraph/cody-shared/src/commands'
 import { type Configuration } from '@sourcegraph/cody-shared/src/configuration'
@@ -42,7 +46,7 @@ export const App: React.FunctionComponent<{ vscodeAPI: VSCodeWrapper }> = ({ vsc
     })
 
     const [formInput, setFormInput] = useState('')
-    const [inputHistory, setInputHistory] = useState<string[] | []>([])
+    const [inputHistory, setInputHistory] = useState<ChatInputHistory[]>([])
     const [userHistory, setUserHistory] = useState<ChatHistory | null>(null)
 
     const [contextSelection, setContextSelection] = useState<ContextFile[] | null>(null)
