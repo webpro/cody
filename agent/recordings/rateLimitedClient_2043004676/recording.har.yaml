@@ -158,8 +158,18 @@ log:
         content:
           encoding: base64
           mimeType: application/json
-          size: 215
-          text: '["H4sIAAAAAAAAA4zOsQqDMBDG8Xe5WW10a1ZXs/UF","jiTW0PROzAktkncvulgylE4HH39+3AYOBUFvkIL4/Vp272EwPdMY7uuCEpiOfUIx7HwEDUgyLTwHe7ERV+frrlFQnYnB140fnhLotlNKVTBikv6XECgJktQtFPGXdT0oy885+v2tv7AiL7icc/4AAAD//wMAqZjCzQQBAAA="]'
+          size: 212
+          text: '["H4sIAAAAAAAAA4zOsQqDMBDG8Xe5WW10a1ZXs/UFjiTW0PROzAktkncvulgylE4HH39+3AYOBUFvkIL4/Vp272EwPdMY7uuCEpiOfUIx7HwEDUgyLTwHe7ERV+frrlFQnYnB140fnhLotlNKVTBikv6XECgJktQtFPGXdT0oy885+v2tv7AiL7icc/4AAAD//wMAqZjCzQQBAAA="]'
+          textDecoded:
+            data:
+              site:
+                codyLLMConfiguration:
+                  chatModel: anthropic/claude-2.0
+                  chatModelMaxTokens: 12000
+                  completionModel: anthropic/claude-instant-1
+                  completionModelMaxTokens: 9000
+                  fastChatModel: anthropic/claude-instant-1
+                  fastChatModelMaxTokens: 9000
         cookies: []
         headers:
           - name: date
@@ -471,8 +481,8 @@ log:
         content:
           encoding: base64
           mimeType: application/json
-          size: 110
-          text: '["H4sIAAAAAAAAA6pWSkksSVSyqlZKLi0qSs0rCS1O","LQJz81MqA4ryXfMSk3JSU5SsSopKU2trawEAAAD//w==","AwCqrAKmMAAAAA=="]'
+          size: 103
+          text: '["H4sIAAAAAAAAA6pWSkksSVSyqlZKLi0qSs0rCS1O","LQJz81MqA4ryXfMSk3JSU5SsSopKU2trawEAAAD//wMAqqwCpjAAAAA="]'
         cookies: []
         headers:
           - name: date
@@ -1040,8 +1050,8 @@ log:
         content:
           encoding: base64
           mimeType: application/json
-          size: 382
-          text: '["H4sIAAAAAAAAA4yRO3LDMAxE78LaKNKk0AF8CU8=","Cohci4wpUgOAtjUe3T0TFUk8iez07+Gze3OBjV13czhzbmwIe7A1wT7zoK473FzhEa5zhowRJjPhOlUxt3OfClxn0rDsvkBfw0yT1AdAMWE18nWccuJipHMxvlJMQ8xpiJbK8K0fOetPX8HiIxVc6IT5UiVss32uPU08gPSSzEdiAStprGK+mW6b6xs+stFY/YkMatuwsIFyGpMp4eqBgEDHKqt298xfYXGzumYBAwUcuWUjNRZfA4ReXvsnZ94NMGH/ML//7IxzLyk87ZjeYb1wKrqJahpKm0ibnDETCvcZvwp7W5YPAAAA//8=","AwCiqgRMiwIAAA=="]'
+          size: 415
+          text: '["H4sIAAAAAAAAAwAAAP//","pJI9bsMwDIXvojkcunTwAXKJogMtvVhq9GNQVGIhyN2LtAWKNLU7dCbfx/dIXoxjZTNcDE4cGyvcHqxNsI88VTO8XEzmBDMYW1wnblpsSXOEglTYhjyZnblpYYYDx4rrbkPicOAWlaqy2OIg5PsowX0zVNoDYpZCb9BROOS62iqsoBhS0EpYLODg6FCEFFXvfP42w3pWSsUeP9r/yDRL2abdh+6ZU7CUWtQQQwZ9lULZiPPI8eW2OAEfV0U1TLnNVJuc0AmZxwj3vwM9PY/rAEVEgkonLHMRXTcGFusp40xH9HORTVdZhat+rilwVqo9Ky/kw+RjmLxuvt0Yy0gzT6B6Dmo9sYArVV9EbdP6U/l6vb4DAAD//wMAEuzGYAgDAAA="]'
         cookies: []
         headers:
           - name: date
@@ -1197,7 +1207,7 @@ log:
         send: 0
         ssl: -1
         wait: 0
-    - _id: cfd63f4827acb03e3e51f65d9fc0d0af
+    - _id: 12b43ad961336ff7655b7a34a02ebc56
       _order: 0
       cache: {}
       request:
@@ -1251,7 +1261,7 @@ log:
                     version: 0
                   source:
                     client: VSCode.Cody
-                    clientVersion: 1.1.2
+                    clientVersion: 1.1.3
         queryString:
           - name: RecordTelemetryEvents
             value: null
@@ -1311,7 +1321,7 @@ log:
         send: 0
         ssl: -1
         wait: 0
-    - _id: 2b1f22fb4872a677facadef9efb4ea2d
+    - _id: 02f02f73b8243cd96debd6f4846262eb
       _order: 0
       cache: {}
       request:
@@ -1365,7 +1375,7 @@ log:
                     version: 0
                   source:
                     client: VSCode.Cody
-                    clientVersion: 1.1.2
+                    clientVersion: 1.1.3
         queryString:
           - name: RecordTelemetryEvents
             value: null
@@ -1374,8 +1384,8 @@ log:
         content:
           encoding: base64
           mimeType: application/json
-          size: 115
-          text: '["H4sIAAAAAAAAA6pWSkksSVSyqlYqSc1JzU0tKaoE","cYpSk/OLUlzLUvNKikH8xJzyxMpiv8wcJau80pyc2traWgAAAAD//wMAhHZ9ajoAAAA="]'
+          size: 122
+          text: '["H4sIAAAAAAAAA6pWSkksSVSyqlYqSc1JzU0tKaoE","cYpSk/OLUlzLUvNKikH8xJzyxMpiv8wcJau80pyc2traWgAAAAD//w==","AwCEdn1qOgAAAA=="]'
         cookies: []
         headers:
           - name: date
@@ -1474,8 +1484,13 @@ log:
         content:
           encoding: base64
           mimeType: application/json
-          size: 151
-          text: '["H4sIAAAAAAAAA6pWSkksSVSyqlYqSi3IL84syS+q","BPEyU5SslEJzw8qTjP0KUtwtK1ND8o18Q3wr/UJ8K/0dbW2VdJRSc5NSU1Iy89JdKzKLS4qVrEqKSlNra2sBAAAA//8DAP+HlYJUAAAA"]'
+          size: 148
+          text: '["H4sIAAAAAAAAA6pWSkksSVSyqlYqSi3IL84syS+qBPEyU5SslEJzw8qTjP0KUtwtK1ND8o18Q3wr/UJ8K/0dbW2VdJRSc5NSU1Iy89JdKzKLS4qVrEqKSlNra2sBAAAA//8DAP+HlYJUAAAA"]'
+          textDecoded:
+            data:
+              repository:
+                embeddingExists: true
+                id: UmVwb3NpdG9yeTo2MTMyNTMyOA==
         cookies: []
         headers:
           - name: date
@@ -1680,15 +1695,8 @@ log:
         content:
           encoding: base64
           mimeType: application/json
-          size: 212
-          text: '["H4sIAAAAAAAAAzTLsQ6CMBCA4Xe52aGFcrbMLoaRwfnuekgTA6QtgyG+u8HEf/mn74BIlaA/oKSq/99v0MO47ln0mWmbH8pwgS2vcZc67lwkp62mdTnBK4ku5WdnKrPGQd/QA0cfsONGdWoJLTs1HborOWNNgwZRvLcWxXfBkRFr2ASZuPUc1CIG+Jx9AQAA//8DAGHOuFqgAAAA"]'
-          textDecoded:
-            data:
-              site:
-                productSubscription:
-                  license:
-                    hashedKey: bd8965b2eef3a61b4e05647a401026066c88116c8594a0c10b09cfb38b9e1669
-                siteID: SourcegraphWeb
+          size: 222
+          text: '["H4sIAAAAAAAAAzTLsQ6CMBCA4Xe52aGFcrbMLoaR","wfnuekgTA6QtgyG+u8HEf/mn74BIlaA/oKSq/99v0MO47ln0mWmbH8pwgS2vcZc67lwkp62mdTnBK4ku5WdnKrPGQd/QA0cfsONGdWoJLTs1HborOWNNgwZRvLcWxXfBkRFr2ASZuPUc1CIG+Jx9AQAA//8=","AwBhzrhaoAAAAA=="]'
         cookies: []
         headers:
           - name: date
@@ -1786,11 +1794,11 @@ log:
           encoding: base64
           mimeType: application/json
           size: 136
-          text: '["H4sIAAAAAAAAA6pWSkksSVSyqlYqzixJBdEFRfkppcklYalFxZn5eUpWSkam5mbmJvFGBkYmugaGuoZG8aZ6Rrpp5ikWackGaYmGiYlKtbW1AAAAAP//AwCdi4Q5SQAAAA=="]'
+          text: '["H4sIAAAAAAAAA6pWSkksSVSyqlYqzixJBdEFRfkppcklYalFxZn5eUpWSkam5uaWpvFGBkYmugaGuoZG8aZ6RrqmaSkmxqmpFslmlklKtbW1AAAAAP//AwBaZvAhSQAAAA=="]'
           textDecoded:
             data:
               site:
-                productVersion: 257674_2024-01-12_5.2-f7d8fc0fa1aa
+                productVersion: 257795_2024-01-12_5.2-5fd43ee8c69b
         cookies: []
         headers:
           - name: date

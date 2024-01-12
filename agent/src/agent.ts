@@ -558,6 +558,18 @@ export class Agent extends MessageHandler {
             return Promise.resolve(null)
         })
 
+        this.registerRequest('commands/explain', () => {
+            return this.createChatPanel(vscode.commands.executeCommand('cody.command.explain-code'))
+        })
+
+        this.registerRequest('commands/test', () => {
+            return this.createChatPanel(vscode.commands.executeCommand('cody.command.generate-tests'))
+        })
+
+        this.registerRequest('commands/smell', () => {
+            return this.createChatPanel(vscode.commands.executeCommand('cody.command.smell-code'))
+        })
+
         this.registerRequest('chat/new', () => {
             return this.createChatPanel(vscode.commands.executeCommand('cody.chat.panel.new'))
         })

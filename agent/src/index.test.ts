@@ -86,6 +86,48 @@ export class TestClient extends MessageHandler {
     }
 
     public webviewMessages: WebviewPostMessageParams[] = []
+    public webviewMessagesEmitter = new vscode.EventEmitter<WebviewPostMessageParams>()
+
+    /**
+     * Returns a promise of the first `type: 'transcript'` message where
+     * `isMessageInProgress: false` and messages is non-empty. This is a helper
+     * function you may need to re-implement if you are writing a Cody client to
+     * write tests. The tricky bit is that we don't have full control over when
+     * the server starts streaming messages to the client, it may start before
+     * chat/new or commands/* requests respond with the ID of the chat session.
+     * Therefore, the only way to correctly identify the first reply in the chat session
+     * is by 1) recording all `webview/postMessage` for unknown IDs and 2)
+     * implement a similar helper that deals with both cases where the first message
+     * has already been sent and when it hasn't been sent.
+     */
+    public firstNonEmptyTranscript(id: string): Promise<ExtensionTranscriptMessage> {
+        const disposables: vscode.Disposable[] = []
+        return new Promise<ExtensionTranscriptMessage>(resolve => {
+            for (const message of this.webviewMessages) {
+                if (
+                    message.id === id &&
+                    message.message.type === 'transcript' &&
+                    message.message.messages.length > 0 &&
+                    !message.message.isMessageInProgress
+                ) {
+                    resolve(message.message)
+                }
+            }
+            disposables.push(
+                this.webviewMessagesEmitter.event(params => {
+                    if (
+                        params.id === id &&
+                        params.message.type === 'transcript' &&
+                        params.message.messages.length > 0 &&
+                        !params.message.isMessageInProgress
+                    ) {
+                        resolve(params.message)
+                    }
+                })
+            )
+        }).finally(() => vscode.Disposable.from(...disposables).dispose())
+    }
+
     public async initialize() {
         this.agentProcess = this.spawnAgentProcess()
 
@@ -95,6 +137,7 @@ export class TestClient extends MessageHandler {
 
         this.registerNotification('webview/postMessage', params => {
             this.webviewMessages.push(params)
+            this.webviewMessagesEmitter.fire(params)
         })
 
         try {
@@ -327,9 +370,9 @@ describe('Agent', () => {
             cursor >= 0
                 ? document.positionAt(cursor)
                 : selectionStart >= 0
-                ? document.positionAt(selectionEnd)
+                ? document.positionAt(selectionStart)
                 : undefined
-        const end = cursor >= 0 ? start : selectionStart >= 0 ? document.positionAt(selectionStart) : undefined
+        const end = cursor >= 0 ? start : selectionEnd >= 0 ? document.positionAt(selectionEnd) : undefined
         client.notify('textDocument/didOpen', {
             uri: uri.toString(),
             content,
@@ -349,6 +392,7 @@ describe('Agent', () => {
         })
         const texts = completions.items.map(item => item.insertText)
         expect(completions.items.length).toBeGreaterThan(0)
+        // prettier-ignore
         expect(texts).toMatchInlineSnapshot(
             `
           [
@@ -362,13 +406,14 @@ describe('Agent', () => {
 
     it('allows us to send a very short chat message', async () => {
         const lastMessage = await client.sendSingleMessage('Hello!')
+        // prettier-ignore
         expect(lastMessage).toMatchInlineSnapshot(
             `
           {
             "contextFiles": [],
-            "displayText": " Hello!",
+            "displayText": " Hello! Nice to meet you.",
             "speaker": "assistant",
-            "text": " Hello!",
+            "text": " Hello! Nice to meet you.",
           }
         `,
             explainPollyError
@@ -412,6 +457,7 @@ describe('Agent', () => {
                 },
             })
         )
+        // prettier-ignore
         expect(reply2.messages.at(-1)?.text).toMatchInlineSnapshot(
             '" You told me your name is Lars Monsen."',
             explainPollyError
@@ -421,6 +467,7 @@ describe('Agent', () => {
     it('allows us to send a longer chat message', async () => {
         const lastMessage = await client.sendSingleMessage('Generate simple hello world function in java!')
         const trimmedMessage = trimEndOfLine(lastMessage?.text ?? '')
+        // prettier-ignore
         expect(trimmedMessage).toMatchInlineSnapshot(
             `
           " Here is a simple Hello World program in Java:
@@ -435,17 +482,17 @@ describe('Agent', () => {
           }
           \`\`\`
 
-          This program prints \\"Hello World!\\" to the console when run. It contains a main method inside a class called Main, as all Java programs require. The println statement prints the text to the console.
+          This program has a main method that prints \\"Hello World!\\" to the console when executed. The key steps are:
 
-          To run this:
+          - The class is defined as \`public\` so it can be accessed from other classes.
 
-          1. Save the code in a file called Main.java
-          2. Compile it with: javac Main.java
-          3. Run it with: java Main
+          - The \`main\` method is defined as \`public static void\` which means it can be run without creating an instance of the Main class.
 
-          The \\"Hello World!\\" text will be printed to the console.
+          - The \`main\` method accepts a \`String[] args\` parameter, which are command line arguments passed to the program.
 
-          Let me know if you need any clarification or have additional requirements for the Java program!"
+          - \`System.out.println()\` is used to print \\"Hello World!\\" to the console.
+
+          So in summary, this simple program prints a greeting to the console when run. The main method serves as the entry point for the program execution."
         `,
             explainPollyError
         )
@@ -468,29 +515,194 @@ describe('Agent', () => {
         // TODO: make this test return a TypeScript implementation of
         // `animal.ts`. It currently doesn't do this because the workspace root
         // is not a git directory and symf reports some git-related error.
+        // prettier-ignore
         expect(trimEndOfLine(lastMessage?.text ?? '')).toMatchInlineSnapshot(
             `
-          " Here is the code for the Dog class implementing the Animal interface:
+          " \`\`\`typescript
+          export class Dog implements Animal {
+            name: string;
 
-          \`\`\`java
-          public class Dog implements Animal {
-
-            @Override
-            public void makeSound() {
-              System.out.println(\\"Woof!\\");
+            constructor(name: string) {
+              this.name = name;
             }
 
-            @Override
-            public void move() {
-              System.out.println(\\"The dog runs\\");
+            makeAnimalSound() {
+              return 'Woof!';
             }
 
+            isMammal = true;
           }
           \`\`\`"
         `,
             explainPollyError
         )
     }, 20_000)
+
+    describe('Commands', () => {
+        it('explain', async () => {
+            await openFile(animalUri)
+            const id = await client.request('commands/explain', null)
+            const lastMessage = await client.firstNonEmptyTranscript(id)
+            // prettier-ignore
+            expect(trimEndOfLine(lastMessage.messages.at(-1)?.text ?? '')).toMatchInlineSnapshot(
+                `
+              " The selected code defines an Animal interface in TypeScript.
+
+              The purpose of this interface is to provide a template for creating objects that represent animals. It defines the properties and methods that any animal object should have.
+
+              This interface takes no inputs. It simply declares what members an animal object should contain.
+
+              It does not directly produce any outputs. However, other code could use this interface to create animal objects with the proper shape.
+
+              The interface achieves its purpose by declaring:
+
+              1. A name property of type string to store the animal's name
+
+              2. A makeAnimalSound method that returns a string to represent the sound the animal makes
+
+              3. An isMammal boolean property to indicate if the animal is a mammal
+
+              By defining this interface, we can ensure any code that creates an animal object follows the same conventions and has these required members. Other code can also rely on the presence of these members when working with animal objects.
+
+              The key logic is in the interface declaration itself. It outlines the essential data (name, isMammal) and behavior (makeAnimalSound) that makes up an animal. This provides a consistent template for animal data in the codebase.
+
+              In summary, the Animal interface defines a blueprint for animal objects that includes the core properties and methods needed to represent an animal in the code. It standardizes the shape of animal data without implementing the details itself."
+            `,
+                explainPollyError
+            )
+        }, 20_000)
+
+        it('test', async () => {
+            await openFile(animalUri)
+            const id = await client.request('commands/test', null)
+            const lastMessage = await client.firstNonEmptyTranscript(id)
+            // prettier-ignore
+            expect(trimEndOfLine(lastMessage.messages.at(-1)?.text ?? '')).toMatchInlineSnapshot(
+                `
+              " No test framework or libraries detected in shared context. Importing Jest for unit testing:
+
+              \`\`\`typescript
+              import { describe, expect, test } from 'jest';
+              import { Animal } from './animal';
+
+              describe('Animal', () => {
+
+                test('makeAnimalSound returns animal sound', () => {
+                  const animal = {
+                    name: 'Cat',
+                    makeAnimalSound: () => 'Meow',
+                    isMammal: true
+                  } as Animal;
+
+                  expect(animal.makeAnimalSound()).toBe('Meow');
+                });
+
+                test('isMammal returns true for mammal', () => {
+                  const mammal = {
+                    name: 'Dog',
+                    makeAnimalSound: () => 'Woof',
+                    isMammal: true
+                  } as Animal;
+
+                  expect(mammal.isMammal).toBeTruthy();
+                });
+
+                test('isMammal returns false for non-mammal', () => {
+                  const nonMammal = {
+                    name: 'Snake',
+                    makeAnimalSound: () => 'Hiss',
+                    isMammal: false
+                  } as Animal;
+
+                  expect(nonMammal.isMammal).toBeFalsy();
+                });
+
+              });
+              \`\`\`
+
+              This adds basic unit tests for the Animal interface using Jest to validate the makeAnimalSound and isMammal properties. It covers simple valid cases and edge cases. Limitations are no mocks and minimal validation of functionality."
+            `,
+                explainPollyError
+            )
+        }, 20_000)
+
+        it('smell', async () => {
+            await openFile(animalUri)
+            const id = await client.request('commands/smell', null)
+            const lastMessage = await client.firstNonEmptyTranscript(id)
+
+            // prettier-ignore
+            expect(trimEndOfLine(lastMessage.messages.at(-1)?.text ?? '')).toMatchInlineSnapshot(
+                `
+              " Here are 5 potential improvements for the selected TypeScript code:
+
+              1. Add type annotations for method parameters and return values:
+
+              \`\`\`
+              export interface Animal {
+                name: string
+                makeAnimalSound(volume?: number): string
+                isMammal: boolean
+              }
+              \`\`\`
+
+              Adding type annotations makes the code more self-documenting and enables stronger type checking.
+
+              2. Make interface name more semantic:
+
+              \`\`\`
+              export interface AnimalInterface {
+                // ...
+              }
+              \`\`\`
+
+              The \`Animal\` name doesn't communicate that this is an interface. \`AnimalInterface\` is more semantic.
+
+              3. Make method names more semantic:
+
+              \`\`\`
+              makeSound()
+              isWarmBlooded()
+              \`\`\`
+
+              The method names could be more descriptive.
+
+              4. Add JSDoc comments for documentation:
+
+              \`\`\`
+              /**
+               * Represents an animal.
+               */
+              export interface Animal {
+                // ...
+              }
+              \`\`\`
+
+              JSDoc improves documentation and discoverability.
+
+              5. Export const enum for mammal property:
+
+              \`\`\`
+              export const enum AnimalClass {
+                MAMMAL,
+                REPTILE,
+                // ...
+              }
+
+              export interface Animal {
+                // ...
+                class: AnimalClass
+              }
+              \`\`\`
+
+              This avoids magic string literals.
+
+              Overall the selected code follows good practices and has no major issues. These suggestions may help improve readability, documentation and type safety."
+            `,
+                explainPollyError
+            )
+        }, 20_000)
+    })
 
     // TODO Fix test - fails intermittently on CI
     // e.g. https://github.com/sourcegraph/cody/actions/runs/7191096335/job/19585263054#step:9:1723
@@ -514,6 +726,7 @@ describe('Agent', () => {
             const messages = client.progressMessages
                 .filter(message => message.id === progressID)
                 .map(({ method, message }) => [method, { ...message, id: 'THE_ID' }])
+            // prettier-ignore
             expect(messages).toMatchInlineSnapshot(`
               [
                 [

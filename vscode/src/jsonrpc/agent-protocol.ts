@@ -67,6 +67,10 @@ export type Requests = {
     // while awaiting on this response.
     'chat/submitMessage': [{ id: string; message: WebviewMessage }, ExtensionMessage]
 
+    'commands/explain': [null, string]
+    'commands/test': [null, string]
+    'commands/smell': [null, string]
+
     // Low-level API to trigger a VS Code command with any argument list. Avoid
     // using this API in favor of high-level wrappers like 'chat/new'.
     'command/execute': [ExecuteCommandParams, any]
