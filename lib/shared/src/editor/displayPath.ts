@@ -31,6 +31,18 @@ export function displayPath(location: URI | string): string {
     return _displayPath(location, envInfo)
 }
 
+export function displayPathDirname(location: URI | string): string {
+    throw new Error('not yet implemented')
+}
+
+export function displayPathBasename(location: URI | string): string {
+    throw new Error('not yet implemented')
+}
+
+export function displayPathWithoutWorkspaceFolder(location: URI | string): string {
+    throw new Error('not yet implemented')
+}
+
 function _displayPath(location: URI | string, { workspaceFolders, isWindows }: DisplayPathEnvInfo): string {
     const uri = typeof location === 'string' ? URI.parse(location) : URI.from(location)
 
