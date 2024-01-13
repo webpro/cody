@@ -64,15 +64,13 @@ describe('Transcript', () => {
                 Promise.resolve({
                     codeResults: [
                         {
-                            fileName: testFileUri('src/main.go').fsPath,
+                            uri: testFileUri('src/main.go'),
                             startLine: 0,
                             endLine: 1,
                             content: 'package main',
                         },
                     ],
-                    textResults: [
-                        { fileName: testFileUri('docs/README.md').fsPath, startLine: 0, endLine: 1, content: '# Main' },
-                    ],
+                    textResults: [{ uri: testFileUri('docs/README.md'), startLine: 0, endLine: 1, content: '# Main' }],
                 }),
         })
 
@@ -122,15 +120,13 @@ describe('Transcript', () => {
                 Promise.resolve({
                     codeResults: [
                         {
-                            fileName: testFileUri('src/main.go').fsPath,
+                            uri: testFileUri('src/main.go'),
                             startLine: 0,
                             endLine: 1,
                             content: 'package main',
                         },
                     ],
-                    textResults: [
-                        { fileName: testFileUri('docs/README.md').fsPath, startLine: 0, endLine: 1, content: '# Main' },
-                    ],
+                    textResults: [{ uri: testFileUri('docs/README.md'), startLine: 0, endLine: 1, content: '# Main' }],
                 }),
         })
 
@@ -177,15 +173,13 @@ describe('Transcript', () => {
                 Promise.resolve({
                     codeResults: [
                         {
-                            fileName: testFileUri('src/main.go').fsPath,
+                            uri: testFileUri('src/main.go'),
                             startLine: 0,
                             endLine: 1,
                             content: 'package main',
                         },
                     ],
-                    textResults: [
-                        { fileName: testFileUri('docs/README.md').fsPath, startLine: 0, endLine: 1, content: '# Main' },
-                    ],
+                    textResults: [{ uri: testFileUri('docs/README.md'), startLine: 0, endLine: 1, content: '# Main' }],
                 }),
         })
         const intentDetector = new MockIntentDetector({ isCodebaseContextRequired: async () => Promise.resolve(true) })
@@ -282,15 +276,13 @@ describe('Transcript', () => {
                 Promise.resolve({
                     codeResults: [
                         {
-                            fileName: testFileUri('src/main.go').fsPath,
+                            uri: testFileUri('src/main.go'),
                             startLine: 0,
                             endLine: 1,
                             content: 'package main',
                         },
                     ],
-                    textResults: [
-                        { fileName: testFileUri('docs/README.md').fsPath, startLine: 0, endLine: 1, content: '# Main' },
-                    ],
+                    textResults: [{ uri: testFileUri('docs/README.md'), startLine: 0, endLine: 1, content: '# Main' }],
                 }),
         })
         const intentDetector = new MockIntentDetector({
@@ -380,15 +372,13 @@ describe('Transcript', () => {
                 Promise.resolve({
                     codeResults: [
                         {
-                            fileName: testFileUri('src/main.go').fsPath,
+                            uri: testFileUri('src/main.go'),
                             startLine: 0,
                             endLine: 1,
                             content: 'package main',
                         },
                     ],
-                    textResults: [
-                        { fileName: testFileUri('docs/README.md').fsPath, startLine: 0, endLine: 1, content: '# Main' },
-                    ],
+                    textResults: [{ uri: testFileUri('docs/README.md'), startLine: 0, endLine: 1, content: '# Main' }],
                 }),
         })
         const intentDetector = new MockIntentDetector({ isCodebaseContextRequired: async () => Promise.resolve(true) })

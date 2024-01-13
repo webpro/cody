@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch'
 import type { Response as NodeResponse } from 'node-fetch'
+import { type URI } from 'vscode-uri'
 
 import { type TelemetryEventInput } from '@sourcegraph/telemetry'
 
@@ -153,7 +154,7 @@ interface LogEventResponse {}
 export interface EmbeddingsSearchResult {
     repoName?: string
     revision?: string
-    fileName: string
+    uri: URI // TODO(sqs): need to construct this properly
     startLine: number
     endLine: number
     content: string

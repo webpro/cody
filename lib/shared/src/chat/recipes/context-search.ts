@@ -1,6 +1,7 @@
 import { Utils, type URI } from 'vscode-uri'
 
 import { type CodebaseContext } from '../../codebase-context'
+import { displayPath, displayPathWithoutWorkspaceFolder } from '../../editor/displayPath'
 import { MAX_HUMAN_INPUT_TOKENS } from '../../prompt/constants'
 import { truncateText } from '../../prompt/truncation'
 import { Interaction } from '../transcript/interaction'
@@ -69,22 +70,26 @@ export class ContextSearch implements Recipe {
         let snippets = `Here are the code snippets for: ${text}\n\n`
         for (const file of resultContext.results) {
             const fileContent = this.sanitizeContent(file.content)
-            const extension = getFileExtension(file.fileName)
+            const extension = getFileExtension(file.uri.path)
             const ignoreFilesExtension = /^(md|txt)$/
             if (extension.match(ignoreFilesExtension)) {
                 continue
             }
-            let uri: string = new URL(`/search?q=context:global+file:${file.fileName}`, endpointUri).href
+            let uri: string = new URL(
+                `/search?q=context:global+file:${displayPathWithoutWorkspaceFolder(file.uri)}`,
+                endpointUri
+            ).href
 
             if (workspaceRootUri) {
-                const fileUri = Utils.joinPath(workspaceRootUri, file.fileName)
+                const fileUri = Utils.joinPath(workspaceRootUri, file.uri.path)
                 // TODO: make this open non-file: URIs
+                // TODO(sqs): check if this works for windows paths
                 uri = `vscode://file${fileUri.fsPath}`
             }
 
             snippets +=
                 fileContent && fileContent.length > 5
-                    ? `File Name: [_${file.fileName}_](${uri})\n\`\`\`${extension}\n${fileContent}\n\`\`\`\n\n`
+                    ? `File Name: [_${displayPath(file.uri)}_](${uri})\n\`\`\`${extension}\n${fileContent}\n\`\`\`\n\n`
                     : ''
         }
 

@@ -1303,14 +1303,10 @@ class ContextProvider implements IContextProvider {
                 new vscode.Position(result.endLine, 0)
             )
 
-            // TODO(sqs): this is broken for multi-root workspaces because it assumes that the file
-            // exists in the first workspaceFolder and that the file still exists.
-            const uri = vscode.Uri.joinPath(workspaceFolder.uri, result.fileName)
-
             // Filter out ignored files
-            if (!isCodyIgnoredFile(vscode.Uri.file(result.fileName))) {
+            if (!isCodyIgnoredFile(result.uri)) {
                 contextItems.push({
-                    uri,
+                    uri: result.uri,
                     range,
                     text: result.content,
                     source: 'embeddings',
@@ -1348,16 +1344,13 @@ class ContextProvider implements IContextProvider {
             throw new Error(`Error retrieving embeddings: ${embeddings}`)
         }
         for (const codeResult of embeddings.codeResults) {
-            // TODO(sqs): this is broken for multi-root workspaces because it assumes that the file
-            // exists in the first workspaceFolder and that the file still exists.
-            const uri = vscode.Uri.joinPath(workspaceFolder.uri, codeResult.fileName)
             const range = new vscode.Range(
                 new vscode.Position(codeResult.startLine, 0),
                 new vscode.Position(codeResult.endLine, 0)
             )
-            if (!isCodyIgnoredFile(uri)) {
+            if (!isCodyIgnoredFile(codeResult.uri)) {
                 contextItems.push({
-                    uri,
+                    uri: codeResult.uri,
                     range,
                     text: codeResult.content,
                     source: 'embeddings',
@@ -1366,16 +1359,13 @@ class ContextProvider implements IContextProvider {
         }
 
         for (const textResult of embeddings.textResults) {
-            // TODO(sqs): this is broken for multi-root workspaces because it assumes that the file
-            // exists in the first workspaceFolder and that the file still exists.
-            const uri = vscode.Uri.joinPath(workspaceFolder.uri, textResult.fileName)
             const range = new vscode.Range(
                 new vscode.Position(textResult.startLine, 0),
                 new vscode.Position(textResult.endLine, 0)
             )
-            if (!isCodyIgnoredFile(uri)) {
+            if (!isCodyIgnoredFile(textResult.uri)) {
                 contextItems.push({
-                    uri,
+                    uri: textResult.uri,
                     range,
                     text: textResult.content,
                     source: 'embeddings',

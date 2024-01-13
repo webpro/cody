@@ -23,7 +23,7 @@ export interface QueryResultSet {
 }
 
 interface QueryResult {
-    fileName: string
+    fileName: string // TODO(sqs): must be changed in the agent
     startLine: number
     endLine: number
     content: string
