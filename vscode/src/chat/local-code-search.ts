@@ -108,11 +108,11 @@ function lastNComponents(path_: string, n: number): string {
     return components.slice(components.length - n).join(path.sep)
 }
 
-function groupByFile(results: Result[]): { file: string; results: Result[] }[] {
-    const groups: { file: string; results: Result[] }[] = []
+function groupByFile(results: Result[]): { file: vscode.Uri; results: Result[] }[] {
+    const groups: { file: vscode.Uri; results: Result[] }[] = []
 
     for (const result of results) {
-        const group = groups.find(g => g.file === result.file)
+        const group = groups.find(g => g.file.toString() === result.file.toString())
         if (group) {
             group.results.push(result)
         } else {
@@ -125,12 +125,11 @@ function groupByFile(results: Result[]): { file: string; results: Result[] }[] {
     return groups
 }
 
-async function htmlForResultGroups(groups: { file: string; results: Result[] }[]): Promise<string> {
+async function htmlForResultGroups(groups: { file: vscode.Uri; results: Result[] }[]): Promise<string> {
     const groupHTMLsPromise = groups.map(async ({ file, results }) => {
         const doc = await vscode.workspace.openTextDocument(file)
         const extension = getFileExtension(file)
-        const fileUri = vscode.Uri.file(file)
-        const uri = vscode.Uri.parse(`vscode://file${fileUri.path}`).toString()
+        const uri = vscode.Uri.parse(`vscode://file${file.path}`).toString()
 
         const resultsHTML: string[] = []
         for (const result of results) {
@@ -156,20 +155,23 @@ ${firstNLines(text, 10)}
 </a>`
             )
         }
-        const fileHeaderHTML = `<span class="display: block;"><a href="${uri}">${lastNComponents(file, 3)}</a></span>`
+        const fileHeaderHTML = `<span class="display: block;"><a href="${uri}">${lastNComponents(
+            file.fsPath,
+            3
+        )}</a></span>`
         return `<div class="search-chunk">${fileHeaderHTML}${resultsHTML.join('\n')}</div>`
     })
     const groupHTMLs = await Promise.all(groupHTMLsPromise)
     return groupHTMLs.join('\n')
 }
 
-function getCurrentWorkspaceRoot(): string | null {
+function getCurrentWorkspaceRoot(): vscode.Uri | null {
     const uri = getEditor().active?.document?.uri
     if (uri) {
         const wsFolder = vscode.workspace.getWorkspaceFolder(uri)
         if (wsFolder) {
-            return wsFolder.uri.fsPath
+            return wsFolder.uri
         }
     }
-    return vscode.workspace.workspaceFolders?.[0]?.uri.fsPath ?? null
+    return vscode.workspace.workspaceFolders?.[0]?.uri ?? null
 }

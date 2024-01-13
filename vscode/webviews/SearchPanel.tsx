@@ -8,6 +8,7 @@ import React, { useEffect, useMemo, useRef } from 'react'
 import { debounce } from 'lodash'
 import { LRUCache } from 'lru-cache'
 
+import { displayPathBasename, displayPathDirname } from '@sourcegraph/cody-shared/src/editor/displayPath'
 import { type SearchPanelFile } from '@sourcegraph/cody-shared/src/local-context'
 
 import type { VSCodeWrapper } from './utils/VSCodeApi'
@@ -300,14 +301,13 @@ export const SearchPanel: React.FunctionComponent<{ vscodeAPI: VSCodeWrapper }> 
                                         <span className={styles.filematchIcon}>
                                             <i className="codicon codicon-file-code" />
                                         </span>
-                                        <span className={styles.filematchTitle} title={result.basename}>
-                                            {result.basename}
+                                        <span className={styles.filematchTitle} title={displayPathBasename(result.uri)}>
+                                            {displayPathBasename(result.uri)}
                                         </span>
                                         <span className={styles.filematchDescription}>
-                                            {result.wsname && (
-                                                <span title={result.wsname}>{result.wsname}&nbsp;&middot;&nbsp;</span>
-                                            )}
-                                            <span title={result.dirname}>{result.dirname}</span>
+                                            <span title={displayPathDirname(result.uri)}>
+                                                {displayPathDirname(result.uri)}
+                                            </span>
                                         </span>
                                     </div>
                                 </div>

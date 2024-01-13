@@ -8,6 +8,7 @@ import {
     type Disposable,
 } from '@sourcegraph/cody-shared/src/codebase-context/context-status'
 import { type Editor } from '@sourcegraph/cody-shared/src/editor'
+import { displayPathBasename } from '@sourcegraph/cody-shared/src/editor/displayPath'
 import { isDotCom } from '@sourcegraph/cody-shared/src/sourcegraph-api/environments'
 import { isError } from '@sourcegraph/cody-shared/src/utils'
 
@@ -18,7 +19,7 @@ import { getCodebaseFromWorkspaceUri } from '../../repository/repositoryHelpers'
 import { type CachedRemoteEmbeddingsClient } from '../CachedRemoteEmbeddingsClient'
 
 interface CodebaseIdentifiers {
-    local: string
+    localFolder: vscode.Uri
     remote?: string
     remoteRepoId?: string
     setting?: string
@@ -98,7 +99,7 @@ export class CodebaseStatusProvider implements vscode.Disposable, ContextStatusP
 
         return [
             {
-                name: codebase.local,
+                name: displayPathBasename(codebase.localFolder),
                 providers,
             },
         ]
@@ -169,7 +170,7 @@ export class CodebaseStatusProvider implements vscode.Disposable, ContextStatusP
         const config = getConfiguration()
         if (
             this._currentCodebase !== undefined &&
-            workspaceRoot?.fsPath === this._currentCodebase?.local &&
+            workspaceRoot?.fsPath === this._currentCodebase?.localFolder &&
             config.codebase === this._currentCodebase?.setting &&
             this._currentCodebase?.remoteRepoId
         ) {
@@ -179,7 +180,7 @@ export class CodebaseStatusProvider implements vscode.Disposable, ContextStatusP
 
         let newCodebase: CodebaseIdentifiers | null = null
         if (workspaceRoot) {
-            newCodebase = { local: workspaceRoot.fsPath, setting: config.codebase }
+            newCodebase = { localFolder: workspaceRoot, setting: config.codebase }
             const currentFile = getEditor()?.active?.document?.uri
             // Get codebase from config or fallback to getting codebase name from current file URL
             // Always use the codebase from config as this is manually set by the user
@@ -202,8 +203,8 @@ export class CodebaseStatusProvider implements vscode.Disposable, ContextStatusP
         if (!this.symf) {
             return false
         }
-        const newSymfStatus = this._currentCodebase?.local
-            ? await this.symf.getIndexStatus(this._currentCodebase.local)
+        const newSymfStatus = this._currentCodebase?.localFolder
+            ? await this.symf.getIndexStatus(this._currentCodebase.localFolder)
             : undefined
         const didSymfStatusChange = this.symfIndexStatus !== newSymfStatus
         this.symfIndexStatus = newSymfStatus
